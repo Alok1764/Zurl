@@ -6,6 +6,7 @@ import com.college.urlshortener.auth.dto.RefreshTokenRequest;
 import com.college.urlshortener.auth.dto.RegisterRequest;
 import com.college.urlshortener.auth.model.RefreshToken;
 import com.college.urlshortener.auth.repository.RefreshTokenRepository;
+import com.college.urlshortener.config.JwtConfig;
 import com.college.urlshortener.security.JwtService;
 import com.college.urlshortener.user.model.User;
 import com.college.urlshortener.user.repository.UserRepository;
@@ -31,12 +32,8 @@ public class AuthService {
     private final PasswordEncoder passwordEncoder;
     private final JwtService jwtService;
     private final AuthenticationManager authenticationManager;
+    private final JwtConfig jwtConfig;
 
-    @Value("${jwt.access-token-expiry}")
-    private long accessTokenExpiry;
-
-    @Value("${jwt.refresh-token-expiry}")
-    private long refreshTokenExpiry;
 
     @Transactional
     public AuthResponse register(RegisterRequest request) {
@@ -99,11 +96,11 @@ public class AuthService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(rawRefreshToken)
                 .user(user)
-                .expiresAt(LocalDateTime.now().plusSeconds(refreshTokenExpiry / 1000))
+                .expiresAt(LocalDateTime.now().plusSeconds(Integer.parseInt(jwtConfig.getRefreshTokenExpiry())/ 1000))
                 .build();
 
         refreshTokenRepository.save(refreshToken);
 
-        return new AuthResponse(accessToken, rawRefreshToken, accessTokenExpiry);
+        return new AuthResponse(accessToken, rawRefreshToken,Integer.parseInt(jwtConfig.getAccessTokenExpiry()));
     }
 }

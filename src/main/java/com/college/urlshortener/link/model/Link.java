@@ -10,7 +10,15 @@ import lombok.NoArgsConstructor;
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "links")
+@Table(name = "links",
+        indexes = {
+        @Index(name="idx_link_user_id",columnList = "user_id"),
+        @Index(name="idx_link_short_code",columnList = "short_code"),
+        },
+        uniqueConstraints = {
+        @UniqueConstraint(name = "unique_short_code",columnNames = "short_code")
+        }
+)
 @Data
 @Builder
 @NoArgsConstructor

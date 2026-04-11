@@ -1,36 +1,31 @@
 package com.college.urlshortener.security;
 
+import com.college.urlshortener.config.JwtConfig;
 import com.college.urlshortener.user.model.User;
 import io.jsonwebtoken.Claims;
 import io.jsonwebtoken.Jwts;
+import io.jsonwebtoken.io.Decoders;
 import io.jsonwebtoken.security.Keys;
-import org.springframework.beans.factory.annotation.Value;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
-
-import javax.crypto.SecretKey;
-import java.nio.charset.StandardCharsets;
+import java.security.Key;
+import java.time.Instant;
 import java.util.Date;
 
 @Service
+@RequiredArgsConstructor
 public class JwtService {
 
-    private final SecretKey signingKey;
-    private final long accessTokenExpiry;
-
-    public JwtService(
-            @Value("${jwt.secret}") String secret,
-            @Value("${jwt.access-token-expiry}") long accessTokenExpiry
-    ) {
-        this.signingKey = Keys.hmacShaKeyFor(secret.getBytes(StandardCharsets.UTF_8));
-        this.accessTokenExpiry = accessTokenExpiry;
-    }
+    private final JwtConfig jwtConfig;
 
     public String generateAccessToken(User user) {
         return Jwts.builder()
-                .subject(user.getEmail())
-                .issuedAt(new Date())
-                .expiration(new Date(System.currentTimeMillis() + accessTokenExpiry))
-                .signWith(signingKey)
+                .setSubject(user.getEmail())
+                .setIssuedAt(new Date())
+                .setExpiration(Date.from(
+                        Instant.now().plusMillis(Long.parseLong(jwtConfig.getAccessTokenExpiry())
+                )))
+                .signWith(key())
                 .compact();
     }
 
@@ -47,10 +42,14 @@ public class JwtService {
     }
 
     private Claims parseClaims(String token) {
-        return Jwts.parser()
-                .verifyWith(signingKey)
+        return Jwts.parserBuilder()
+                .setSigningKey(key())
                 .build()
-                .parseSignedClaims(token)
-                .getPayload();
+                .parseClaimsJws(token)
+                .getBody();
+    }
+
+    private Key key() {
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getSecret()));
     }
 }

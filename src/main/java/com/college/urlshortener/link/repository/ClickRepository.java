@@ -5,10 +5,11 @@ import com.college.urlshortener.link.model.Link;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
+import org.springframework.stereotype.Repository;
 
 import java.time.LocalDateTime;
 import java.util.List;
-
+@Repository
 public interface ClickRepository extends JpaRepository<Click, Long> {
 
     long countByLink(Link link);

@@ -55,16 +55,32 @@ public class ClickService {
 
     private String parseDeviceType(String userAgent) {
         if (userAgent == null) return "desktop";
-        if (userAgent.contains("Mobile")) return "mobile";
-        if (userAgent.contains("Tablet")) return "tablet";
-        return "desktop";
+
+        String ua = userAgent.toLowerCase();
+
+        return switch (ua) {
+            case String s when s.contains("ipad")
+                    || (s.contains("android") && !s.contains("mobi")) -> "tablet";
+
+            case String s when s.contains("mobi")
+                    || s.contains("iphone") -> "mobile";
+
+            default -> "desktop";
+        };
     }
 
     private String parseBrowser(String userAgent) {
         if (userAgent == null) return "Other";
-        if (userAgent.contains("Firefox")) return "Firefox";
-        if (userAgent.contains("Chrome")) return "Chrome";
-        if (userAgent.contains("Safari")) return "Safari";
-        return "Other";
+
+        String ua = userAgent.toLowerCase();
+
+        return switch (ua) {
+            case String s when s.contains("edg") -> "Edge";
+            case String s when s.contains("opr") || s.contains("opera") -> "Opera";
+            case String s when s.contains("chrome") -> "Chrome";
+            case String s when s.contains("safari") -> "Safari";
+            case String s when s.contains("firefox") -> "Firefox";
+            default -> "Other";
+        };
     }
 }
