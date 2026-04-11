@@ -1,0 +1,38 @@
+services:
+  db:
+    image: mysql:8.0
+    container_name: urlshortener-db
+    environment:
+      MYSQL_DATABASE: urlshortener
+      MYSQL_USER: appuser
+      MYSQL_PASSWORD: apppassword
+      MYSQL_ROOT_PASSWORD: rootpassword
+    volumes:
+      - mysql_data:/var/lib/mysql
+    ports:
+      - "3306:3306"
+    healthcheck:
+      test: ["CMD", "mysqladmin", "ping", "-h", "localhost", "-u", "appuser", "--password=apppassword"]
+      interval: 10s
+      timeout: 5s
+      retries: 10
+      start_period: 30s
+
+  app:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: urlshortener-app
+    ports:
+      - "8080:8080"
+    depends_on:
+      db:
+        condition: service_healthy
+    environment:
+      DB_URL: jdbc:mysql://db:3306/urlshortener
+      DB_USER: appuser
+      DB_PASS: apppassword
+      JWT_SECRET: change-this-to-a-very-long-secure-random-secret-in-production-min-256-bits
+
+volumes:
+  mysql_data:
