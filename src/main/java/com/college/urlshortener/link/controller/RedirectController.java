@@ -42,10 +42,19 @@ public class RedirectController {
     }
 
     private String extractClientIp(HttpServletRequest request) {
-        String forwarded = request.getHeader("X-Forwarded-For");
-        if (forwarded != null && !forwarded.isBlank()) {
-            return forwarded.split(",")[0].trim();
+        String[] headers = {
+                "X-Forwarded-For",
+                "X-Real-IP",
+                "Forwarded"
+        };
+
+        for (String header : headers) {
+            String value = request.getHeader(header);
+            if (value != null && !value.isBlank()) {
+                return value.split(",")[0].trim();
+            }
         }
+
         return request.getRemoteAddr();
     }
 }

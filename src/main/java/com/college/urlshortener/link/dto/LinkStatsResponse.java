@@ -15,4 +15,5 @@ public record LinkStatsResponse(
     public record DailyCount(String date, long count) {}
 
     public record ReferrerCount(String referrer, long count) {}
+
 }

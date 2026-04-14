@@ -10,6 +10,7 @@ import com.college.urlshortener.link.repository.LinkRepository;
 import com.college.urlshortener.user.model.User;
 import com.college.urlshortener.user.repository.UserRepository;
 import lombok.RequiredArgsConstructor;
+import org.springframework.cache.annotation.Cacheable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -35,6 +36,7 @@ public class LinkService {
     private final ClickRepository clickRepository;
     private final UserRepository userRepository;
     private final SecureRandom secureRandom = new SecureRandom();
+
 
     @Transactional
     public CreateLinkResponse createLink(CreateLinkRequest request, String email) {
@@ -62,6 +64,7 @@ public class LinkService {
         );
     }
 
+    @Cacheable(value = "links", key = "#shortCode", sync = true)
     @Transactional(readOnly = true)
     public Link resolveActiveLink(String shortCode) {
         Link link = linkRepository.findByShortCode(shortCode)
@@ -74,6 +77,7 @@ public class LinkService {
         return link;
     }
 
+    @Cacheable(value = "stats", key = "#shortCode")
     @Transactional(readOnly = true)
     public LinkStatsResponse getStats(String shortCode) {
         Link link = linkRepository.findByShortCode(shortCode)
@@ -88,7 +92,7 @@ public class LinkService {
 
         List<LinkStatsResponse.DailyCount> clicksByDay = rawDays.stream()
                 .map(row -> new LinkStatsResponse.DailyCount(row[0].toString(), ((Number) row[1]).longValue()))
-                .collect(Collectors.toList());
+                .toList();
 
         Map<String, Long> byDevice = toStringLongMap(clickRepository.countByDevice(link));
         Map<String, Long> byCountry = toStringLongMap(clickRepository.countByCountry(link));
@@ -97,7 +101,7 @@ public class LinkService {
                 .stream()
                 .limit(10)
                 .map(row -> new LinkStatsResponse.ReferrerCount((String) row[0], ((Number) row[1]).longValue()))
-                .collect(Collectors.toList());
+                .toList();
 
         return new LinkStatsResponse(total, unique, clicksByDay, byDevice, byCountry, topReferrers);
     }
