@@ -1,0 +1,14 @@
+/* ─── Alias Input States ─────────────────────────────────────────────────── */
+.alias-status {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  font-size: var(--text-xs);
+  margin-top: 4px;
+  font-family: var(--font-code);
+  letter-spacing: 0.02em;
+}
+.alias-status--available { color: var(--success); }
+.alias-status--taken     { color: var(--error); }
+.alias-status--checking  { color: var(--text-muted); }
+.alias-status--invalid   { color: var(--error); }

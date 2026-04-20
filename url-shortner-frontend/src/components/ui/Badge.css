@@ -1,0 +1,16 @@
+/* ─── Badge Utility ──────────────────────────────────────────────────────── */
+.badge {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  padding: 2px 8px;
+  border-radius: var(--radius-sm);
+  font-size: var(--text-xs);
+  font-weight: 600;
+  font-family: var(--font-display);
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+}
+.badge--success { background: rgba(0,204,136,0.1); color: var(--success); border: 1px solid var(--success); }
+.badge--error   { background: rgba(255,68,68,0.1); color: var(--error);   border: 1px solid var(--error); }
+.badge--muted   { background: var(--bg-hover); color: var(--text-muted);  border: 1px solid var(--border-muted); }

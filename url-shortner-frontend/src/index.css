@@ -1,0 +1,101 @@
+
+/* ─── Design Tokens ──────────────────────────────────────────────────────── */
+:root {
+  /* Default to dark mode tokens if no theme is specified */
+  --bg-primary:     #0A0A0A;
+  --bg-card:        #202020;
+  --bg-input:       #181818;
+  --bg-hover:       #2A2A2A;
+
+  --text-primary:   #FFFFFF;
+  --text-secondary: #BFBFBF;
+  --text-muted:     #888888;
+
+  --accent:         #FFFFFF;
+  --accent-dim:     #D0D0D0;
+
+  --border:         #FFFFFF;
+  --border-muted:   #444444;
+
+  --shadow-card:     8px 8px 0px #000000;
+  --shadow-card-lg:  12px 12px 0px #000000;
+  --shadow-button:   6px 6px 0px #000000;
+  --shadow-input:    6px 6px 0px #000000;
+  --shadow-sm:       4px 4px 0px #000000;
+  --shadow-error:    6px 6px 0px #3A0000;
+  --shadow-success:  6px 6px 0px #000000;
+
+  --accent-fg:      #000000;
+  --topbar-bg:      rgba(10, 10, 10, 0.96);
+
+  --font-display:   'Space Mono', monospace;
+  --font-body:      'IBM Plex Sans', sans-serif;
+  --font-code:      'JetBrains Mono', monospace;
+
+  --text-hero:   clamp(2.4rem, 6vw, 4.2rem);
+  --text-xl:     1.5rem;
+  --text-lg:     1.125rem;
+  --text-base:   1rem;
+  --text-sm:     0.875rem;
+  --text-xs:     0.75rem;
+
+  --radius-sm:   4px;
+  --radius-md:   6px;
+  --radius-lg:   10px;
+}
+
+[data-theme="dark"] {
+  --bg-primary:     #0A0A0A;
+  --bg-card:        #202020;
+  --bg-input:       #181818;
+  --bg-hover:       #2A2A2A;
+
+  --text-primary:   #FFFFFF;
+  --text-secondary: #BFBFBF;
+  --text-muted:     #888888;
+
+  --accent:         #FFFFFF;
+  --accent-dim:     #D0D0D0;
+
+  --border:         #FFFFFF;
+  --border-muted:   #444444;
+
+  --shadow-card:     8px 8px 0px #000000;
+  --shadow-card-lg:  12px 12px 0px #000000;
+  --shadow-button:   6px 6px 0px #000000;
+  --shadow-input:    6px 6px 0px #000000;
+  --shadow-sm:       4px 4px 0px #000000;
+  --shadow-error:    6px 6px 0px #3A0000;
+  --shadow-success:  6px 6px 0px #000000;
+
+  --accent-fg:      #000000;
+  --topbar-bg:      rgba(10, 10, 10, 0.96);
+}
+
+[data-theme="light"] {
+  --bg-primary:     #F0F0F0;
+  --bg-card:        #FFFFFF;
+  --bg-input:       #FAFAFA;
+  --bg-hover:       #EAEAEA;
+
+  --text-primary:   #000000;
+  --text-secondary: #444444;
+  --text-muted:     #777777;
+
+  --accent:         #F0F0F0;
+  --accent-dim:     #333333;
+
+  --border:         #CCCCCC;
+  --border-muted:   #000000;
+
+  --shadow-card:     8px 8px 0px #000000;
+  --shadow-card-lg:  12px 12px 0px #000000;
+  --shadow-button:   6px 6px 0px #000000;
+  --shadow-input:    6px 6px 0px #000000;
+  --shadow-sm:       4px 4px 0px #000000;
+  --shadow-error:    6px 6px 0px rgba(255, 68, 68, 1);
+  --shadow-success:  6px 6px 0px rgba(0, 204, 136, 1);
+
+  --accent-fg:      #000000;
+  --topbar-bg:      rgba(240, 240, 240, 0.96);
+}

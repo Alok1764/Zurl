@@ -1,0 +1,17 @@
+/* ─── Card Utilities ─────────────────────────────────────────────────────── */
+.card {
+  background: var(--bg-card);
+  border: 2px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+}
+
+.card--sm-shadow  { box-shadow: var(--shadow-sm); }
+.card--no-shadow  { box-shadow: none; }
+.card--accent-border { border-color: var(--accent); box-shadow: var(--shadow-card-lg); }
+
+@media (max-width: 640px) {
+  .card {
+    box-shadow: 4px 4px 0px var(--shadow-card);
+  }
+}

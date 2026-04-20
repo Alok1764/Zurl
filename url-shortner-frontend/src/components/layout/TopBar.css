@@ -1,0 +1,88 @@
+/* ─── TopBar ─────────────────────────────────────────────────────────────── */
+.topbar {
+  position: sticky;
+  top: 0;
+  z-index: 100;
+  width: 100%;
+  background: var(--topbar-bg);
+  border-bottom: 2px solid var(--border-muted);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0 40px;
+  height: 64px;
+}
+
+/* Logo — brutalist badge style */
+.topbar__logo {
+  font-family: var(--font-display);
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--accent-fg);
+  background: var(--accent);
+  cursor: pointer;
+  letter-spacing: 0.04em;
+  padding: 0 14px;
+  height: 36px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow-button);
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s;
+  user-select: none;
+  text-transform: uppercase;
+  border-radius: var(--radius-sm);
+}
+.topbar__logo:hover  { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px var(--border-muted); }
+.topbar__logo:active { transform: translate(6px, 6px); box-shadow: 0px 0px 0px transparent !important; }
+
+.topbar__right {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 14px;
+}
+
+.topbar__shots {
+  font-family: var(--font-display);
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--text-secondary);
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  border: 1px solid var(--border-muted);
+  padding: 5px 10px;
+  border-radius: var(--radius-sm);
+  cursor: default;
+}
+
+@media (max-width: 640px) {
+  .topbar {
+    padding: 8px 16px;
+    height: auto;
+    flex-wrap: wrap;
+    gap: 8px;
+    justify-content: center;
+  }
+
+  .topbar__logo {
+    order: 1;
+    margin-right: auto;
+  }
+
+  .topbar__right {
+    order: 2;
+    margin-left: auto;
+  }
+
+  .topbar__shots {
+    order: 3;
+    width: 100%;
+    text-align: center;
+    justify-content: center;
+    display: flex; /* Show it */
+    background: rgba(255, 255, 255, 0.05);
+    border-style: dashed;
+  }
+}

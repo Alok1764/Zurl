@@ -1,0 +1,6 @@
+/* ─── Divider Utility ────────────────────────────────────────────────────── */
+.divider {
+  height: 1px;
+  background: var(--border-muted);
+  margin: 12px 0;
+}

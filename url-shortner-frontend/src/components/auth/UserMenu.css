@@ -1,0 +1,93 @@
+/* ─── User Dropdown ──────────────────────────────────────────────────────── */
+.avatar-btn {
+  width: 36px;
+  height: 36px;
+  border-radius: var(--radius-sm);
+  border: 2px solid var(--border);
+  box-shadow: var(--shadow-button);
+  background: var(--bg-card);
+  color: var(--text-primary);
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: 0.7rem;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.1s ease, box-shadow 0.1s ease, background 0.15s;
+  overflow: hidden;
+  text-transform: uppercase;
+}
+.avatar-btn:hover  { transform: translate(-2px, -2px); box-shadow: 8px 8px 0px var(--border-muted); }
+.avatar-btn:active { transform: translate(6px, 6px); box-shadow: 0px 0px 0px transparent !important; }
+.avatar-btn img { width: 100%; height: 100%; object-fit: cover; }
+
+.user-menu {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+@media (max-width: 640px) {
+  .user-menu {
+    flex-wrap: wrap;
+    justify-content: center;
+    width: 100%;
+    gap: 8px;
+  }
+}
+
+.user-dropdown {
+  position: absolute;
+  top: calc(100% + 12px);
+  right: 0;
+  background: var(--bg-card);
+  border: 2px solid var(--border-muted);
+  border-radius: var(--radius-lg);
+  box-shadow: var(--shadow-card);
+  min-width: 190px;
+  z-index: 200;
+  overflow: hidden;
+  animation: slideInUp 0.15s ease-out;
+}
+
+.user-dropdown__header {
+  padding: 14px 16px;
+  border-bottom: 1px solid var(--border-muted);
+  background: rgba(255,255,255,0.04);
+}
+
+.user-dropdown__name {
+  font-family: var(--font-display);
+  font-weight: 700;
+  font-size: var(--text-sm);
+  color: var(--text-primary);
+  letter-spacing: -0.01em;
+}
+
+.user-dropdown__email {
+  font-size: var(--text-xs);
+  color: var(--text-muted);
+  margin-top: 2px;
+  font-family: var(--font-code);
+}
+
+.user-dropdown__item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: 11px 16px;
+  font-family: var(--font-body);
+  font-size: var(--text-sm);
+  color: var(--text-secondary);
+  cursor: pointer;
+  transition: background 0.1s, color 0.1s;
+  border: none;
+  background: none;
+  width: 100%;
+  text-align: left;
+}
+.user-dropdown__item:hover { background: var(--bg-hover); color: var(--text-primary); }
+.user-dropdown__item--danger { color: var(--error); }
+.user-dropdown__item--danger:hover { background: rgba(255,68,68,0.08); }
