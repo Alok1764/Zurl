@@ -7,8 +7,6 @@ import org.springframework.cache.caffeine.CaffeineCacheManager;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 
-import java.util.HashMap;
-import java.util.Map;
 import java.util.concurrent.TimeUnit;
 
 @Configuration
@@ -20,22 +18,28 @@ public class CacheConfig {
 
         CaffeineCacheManager manager = new CaffeineCacheManager();
 
-        Map<String, Caffeine<Object, Object>> cacheSpecs = new HashMap<>();
-
-        cacheSpecs.put("links",
+        manager.registerCustomCache("links",
                 Caffeine.newBuilder()
-                        .maximumSize(10_00)
+                        .initialCapacity(1000)
+                        .maximumSize(10_000)
                         .expireAfterWrite(10, TimeUnit.MINUTES)
+                        .build()
         );
 
-        cacheSpecs.put("stats",
+        manager.registerCustomCache("stats",
                 Caffeine.newBuilder()
-                        .maximumSize(5_000)
-                        .expireAfterWrite(1, TimeUnit.MINUTES)
+                        .initialCapacity(100)
+                        .maximumSize(300)
+                        .expireAfterWrite(5, TimeUnit.MINUTES)
+                        .build()
         );
 
-        manager.setCaffeine(Caffeine.newBuilder());
-        manager.setCacheNames(cacheSpecs.keySet());
+        manager.registerCustomCache("globalCount",
+                Caffeine.newBuilder()
+                        .maximumSize(1)
+                        .expireAfterWrite(45, TimeUnit.SECONDS)
+                        .build()
+        );
 
         return manager;
     }

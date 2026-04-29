@@ -1,5 +1,6 @@
 package com.college.urlshortener.link.service;
 
+import com.college.urlshortener.globalCounter.service.GlobalCounterService;
 import com.college.urlshortener.link.dto.CreateLinkRequest;
 import com.college.urlshortener.link.dto.CreateLinkResponse;
 import com.college.urlshortener.link.dto.LinkStatsResponse;
@@ -35,6 +36,7 @@ public class LinkService {
     private final LinkRepository linkRepository;
     private final ClickRepository clickRepository;
     private final UserRepository userRepository;
+    private final GlobalCounterService globalCounterService;
     private final SecureRandom secureRandom = new SecureRandom();
 
 
@@ -45,6 +47,7 @@ public class LinkService {
 
         String shortCode = resolveShortCode(request.customCode());
 
+
         Link link = Link.builder()
                 .shortCode(shortCode)
                 .originalUrl(request.originalUrl())
@@ -53,6 +56,8 @@ public class LinkService {
                 .build();
 
         linkRepository.save(link);
+
+        globalCounterService.incrementLinks();
 
         return new CreateLinkResponse(
                 link.getId(),
@@ -88,7 +93,7 @@ public class LinkService {
 
         LocalDateTime thirtyDaysAgo = LocalDateTime.now().minusDays(30);
         List<Object[]> rawDays = clickRepository.countClicksByDay(link, thirtyDaysAgo);
-        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
+        //DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd");
 
         List<LinkStatsResponse.DailyCount> clicksByDay = rawDays.stream()
                 .map(row -> new LinkStatsResponse.DailyCount(row[0].toString(), ((Number) row[1]).longValue()))
