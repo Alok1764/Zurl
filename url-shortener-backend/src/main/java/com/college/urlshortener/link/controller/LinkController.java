@@ -6,6 +6,7 @@ import com.college.urlshortener.link.dto.LinkStatsResponse;
 import com.college.urlshortener.link.service.LinkService;
 import com.college.urlshortener.link.swagger.CreateLinkDoc;
 import com.college.urlshortener.link.swagger.GetStatsDoc;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpStatus;
@@ -24,11 +25,11 @@ public class LinkController {
     @PostMapping
     @CreateLinkDoc
     public ResponseEntity<CreateLinkResponse> createLink(
-            @Valid @RequestBody CreateLinkRequest request,
-            @AuthenticationPrincipal UserDetails userDetails
+            @Valid @RequestBody CreateLinkRequest createLinkRequest,
+            HttpServletRequest request
     ) {
         return ResponseEntity.status(HttpStatus.CREATED)
-                .body(linkService.createLink(request, userDetails.getUsername()));
+                .body(linkService.createLink(createLinkRequest,request));
     }
 
     @GetMapping("/{shortCode}/stats")

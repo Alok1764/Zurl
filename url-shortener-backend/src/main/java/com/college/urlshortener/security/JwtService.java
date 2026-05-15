@@ -23,7 +23,7 @@ public class JwtService {
                 .setSubject(user.getEmail())
                 .setIssuedAt(new Date())
                 .setExpiration(Date.from(
-                        Instant.now().plusMillis(Long.parseLong(jwtConfig.getAccessTokenExpiry())
+                        Instant.now().plusMillis(Long.parseLong(jwtConfig.accessTokenExpiry())
                 )))
                 .signWith(key())
                 .compact();
@@ -50,6 +50,6 @@ public class JwtService {
     }
 
     private Key key() {
-        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.getSecret()));
+        return Keys.hmacShaKeyFor(Decoders.BASE64.decode(jwtConfig.secret()));
     }
 }

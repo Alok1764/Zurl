@@ -96,11 +96,11 @@ public class AuthService {
         RefreshToken refreshToken = RefreshToken.builder()
                 .token(rawRefreshToken)
                 .user(user)
-                .expiresAt(LocalDateTime.now().plusSeconds(Long.parseLong(jwtConfig.getRefreshTokenExpiry())/ 1000))
+                .expiresAt(LocalDateTime.now().plusSeconds(Long.parseLong(jwtConfig.refreshTokenExpiry())/ 1000))
                 .build();
 
         refreshTokenRepository.save(refreshToken);
 
-        return new AuthResponse(accessToken, rawRefreshToken,Long.parseLong(jwtConfig.getAccessTokenExpiry()));
+        return new AuthResponse(accessToken, rawRefreshToken,Long.parseLong(jwtConfig.accessTokenExpiry()));
     }
 }

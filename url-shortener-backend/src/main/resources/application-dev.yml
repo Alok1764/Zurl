@@ -10,7 +10,11 @@ spring:
     hibernate:
       ddl-auto: update
     show-sql: true
-
+  data:
+    redis:
+      host: localhost
+      port: 6379
+      timeout: 2000ms  # fail fast if Redis is down
 
 
 jwt:
@@ -31,3 +35,11 @@ logging:
   level:
     root: INFO
     com.college.urlshortener: INFO
+
+app:
+  anonymous:
+    daily-limit: 3
+    alias-limit: 1
+  authenticated:
+    daily-limit: 20
+    alias-limit: 5

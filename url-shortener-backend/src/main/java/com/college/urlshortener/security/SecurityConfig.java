@@ -32,11 +32,12 @@ public class SecurityConfig {
                 .authorizeHttpRequests(auth -> auth
                         .requestMatchers("/api/auth/**").permitAll()
                         .requestMatchers("/swagger-ui.html", "/swagger-ui/**", "/api-docs/**","/api/global-counter").permitAll()
-                        .requestMatchers("/{shortCode:[a-zA-Z0-9]{1,10}}").permitAll()
+                        .requestMatchers("/{shortCode:[a-zA-Z0-9]{1,10}}","/api/links").permitAll()
                         .anyRequest().authenticated()
                 )
                 .authenticationProvider(authenticationProvider())
                 .addFilterBefore(jwtAuthFilter, UsernamePasswordAuthenticationFilter.class)
+                .addFilterAfter(new AnonymousCookieFilter(),jwtAuthFilter.getClass())
                 .build();
     }
 

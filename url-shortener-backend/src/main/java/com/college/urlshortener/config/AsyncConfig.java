@@ -14,9 +14,9 @@ public class AsyncConfig {
     @Bean(name = "clickExecutor")
     public Executor clickExecutor() {
         ThreadPoolTaskExecutor executor = new ThreadPoolTaskExecutor();
-        executor.setCorePoolSize(4);
-        executor.setMaxPoolSize(20);
-        executor.setQueueCapacity(500);
+        executor.setCorePoolSize(100);
+        executor.setMaxPoolSize(300);
+        executor.setQueueCapacity(3000);
         executor.setThreadNamePrefix("click-exec-");
         executor.initialize();
         return executor;

@@ -1,29 +1,39 @@
 package com.college.urlshortener.link.service;
 
+import com.college.urlshortener.exceptions.HandleAnonymousUserLimitReachedException;
+import com.college.urlshortener.exceptions.HandleLoginUserLimitReachedException;
 import com.college.urlshortener.globalCounter.service.GlobalCounterService;
 import com.college.urlshortener.link.dto.CreateLinkRequest;
 import com.college.urlshortener.link.dto.CreateLinkResponse;
 import com.college.urlshortener.link.dto.LinkStatsResponse;
-import com.college.urlshortener.link.model.Click;
+
 import com.college.urlshortener.link.model.Link;
 import com.college.urlshortener.link.repository.ClickRepository;
 import com.college.urlshortener.link.repository.LinkRepository;
 import com.college.urlshortener.user.model.User;
 import com.college.urlshortener.user.repository.UserRepository;
+
+import com.college.urlshortener.userquota.service.QuotaService;
+import jakarta.servlet.http.HttpServletRequest;
 import lombok.RequiredArgsConstructor;
 import org.springframework.cache.annotation.Cacheable;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.authentication.AnonymousAuthenticationToken;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.server.ResponseStatusException;
 
 import java.security.SecureRandom;
 import java.time.LocalDateTime;
-import java.time.format.DateTimeFormatter;
+
 import java.util.LinkedHashMap;
 import java.util.List;
 import java.util.Map;
-import java.util.stream.Collectors;
+
 
 @Service
 @RequiredArgsConstructor
@@ -37,25 +47,82 @@ public class LinkService {
     private final ClickRepository clickRepository;
     private final UserRepository userRepository;
     private final GlobalCounterService globalCounterService;
+    private final QuotaService quotaService;
     private final SecureRandom secureRandom = new SecureRandom();
 
 
+    //in future implement retires for it due to random shortcode or alias
     @Transactional
-    public CreateLinkResponse createLink(CreateLinkRequest request, String email) {
-        User user = userRepository.findByEmail(email)
+    public CreateLinkResponse createLink(CreateLinkRequest createLinkRequest, HttpServletRequest request) {
+
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        boolean isLoggedIn = auth != null && auth.isAuthenticated()
+                && !(auth instanceof AnonymousAuthenticationToken);
+
+        User user1 = null;
+
+
+        if (isLoggedIn) {
+            User user = userRepository.findByEmail(auth.getName())
                 .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "User not found"));
+            user1=user;
 
-        String shortCode = resolveShortCode(request.customCode());
+            if (!quotaService.tryConsumeUserLink(user.getId().toString())) {
+                throw new HandleLoginUserLimitReachedException(" Daily limit reached, You have used all 20 links for today ");
+            }
 
+            if (createLinkRequest.customCode() != null && !createLinkRequest.customCode().isBlank()) {
+                if (!quotaService.tryConsumeUserAlias(user.getId().toString())) {
+                    throw new HandleLoginUserLimitReachedException(
+                            "Daily alias limit reached, You have used all 5 alias links for today"
+                    );
+                }
+
+            }
+        }
+        else {
+            String token = (String) request.getAttribute("anon_token");
+            if (token == null || !quotaService.tryConsumeAnonLink(token)) {
+                throw new HandleLoginUserLimitReachedException(" Daily limit reached, Sign up free for 20 links/day");
+            }
+
+            if (createLinkRequest.customCode() != null && !createLinkRequest.customCode().isBlank()) {
+                if (!quotaService.tryConsumeAnonAlias(token)) {
+                    throw new HandleAnonymousUserLimitReachedException(
+                            "Daily alias limit reached, Sign up free for 5 alias links/day"
+                    );
+                }
+            }
+        }
+
+       String shortCode = resolveShortCode(createLinkRequest.customCode());
 
         Link link = Link.builder()
                 .shortCode(shortCode)
-                .originalUrl(request.originalUrl())
-                .user(user)
-                .expiresAt(request.expiresAt())
+                .originalUrl(createLinkRequest.originalUrl())
+                .user(user1)
+                .expiresAt(createLinkRequest.expiresAt())
                 .build();
 
-        linkRepository.save(link);
+        try {
+            linkRepository.save(link);
+        } catch (DataIntegrityViolationException ex) {
+            // Custom alias collision
+            if (createLinkRequest.customCode() != null
+                    && !createLinkRequest.customCode().isBlank()) {
+                throw new ResponseStatusException(
+                        HttpStatus.CONFLICT,
+                        "Custom code already taken"
+                );
+            }
+            // Random collision
+            throw new ResponseStatusException(
+                    HttpStatus.INTERNAL_SERVER_ERROR,
+                    "Failed to generate unique short code"
+            );
+        }
+
+
 
         globalCounterService.incrementLinks();
 
@@ -112,6 +179,7 @@ public class LinkService {
     }
 
     private String resolveShortCode(String customCode) {
+
         if (customCode != null && !customCode.isBlank()) {
             if (linkRepository.existsByShortCode(customCode)) {
                 throw new ResponseStatusException(HttpStatus.CONFLICT, "Custom code already taken");
