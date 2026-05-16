@@ -3,6 +3,7 @@ package com.college.urlshortener.globalCounter.controller;
 
 import com.college.urlshortener.globalCounter.dto.GlobalCounterResponse;
 import com.college.urlshortener.globalCounter.service.GlobalCounterService;
+import com.college.urlshortener.globalCounter.swagger.GlobalCounterDoc;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -17,6 +18,7 @@ public class GlobalCounterController{
     private final GlobalCounterService globalCounterService;
 
     @GetMapping
+    @GlobalCounterDoc
     public ResponseEntity<GlobalCounterResponse> getGlobalCounter(){
         return ResponseEntity.ok(globalCounterService.getGlobalCounter());
     }
